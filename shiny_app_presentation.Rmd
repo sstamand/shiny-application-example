@@ -1,0 +1,86 @@
+---
+title: "Shiny Application for Canada's Federal Transfer Payments"
+author: "sstamand"
+date: "December 3, 2017"
+runtime: shiny
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+setwd("C:/Users/saman/Documents/Coursera/Assignments/Course 9/shiny app/canada_transfer_payments")
+knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.path='Figs/')
+fed_transfer <- read.csv("fed_transfer_data.csv")
+library(shiny)
+library(ggplot2)
+```
+
+## Shiny App Description
+- This shiny app provides a clean way to extract information about the distribution of Fedearl transfer payments to Canadian provinces and territories over time.
+- The app has two panels:
+1. The first panel plots Federal transfer payments by province. It takes as input the year of transfer payments, with options to add or remove axis titles and create you own title.
+2. The second panel displays the value of the transfer payments for a given province or territory and calculates the absolute and percentage change between two years. It takes as input a single province or territory and the range of years.
+
+## Panel 1: Bar Plot Example Code
+```{r plot code, eval = FALSE, warning = FALSE, fig.width=10, fig.height=8}
+inputPanel(
+    sliderInput("year_plot", "Year:", min = 1980,
+        max = 2017, value = 2017, sep = "")
+)
+renderPlot({
+        year_input <- paste0("year_", input$year_plot)
+        # draw the bar graph for selected year
+        ggplot(data = fed_transfer, 
+            aes(x = province, fed_transfer[,year_input])) +
+            geom_col() + xlab("Province") + 
+            ylab("Thousand CAD per person") +
+            theme(axis.text=element_text(size=14), 
+            axis.title.x=element_text(size=20), 
+            axis.title.y=element_text(size=20))
+})
+```
+
+## Panel 1: Bar Plot Example
+```{r plot output, echo = FALSE, warning = FALSE}
+inputPanel(
+    sliderInput("year_plot",
+        "Year:",
+        min = 1980,
+        max = 2017,
+        value = 2017,
+        sep = "")
+)
+
+renderPlot({
+        year_input <- paste0("year_", input$year_plot)
+        # draw the bar graph for selected year
+        ggplot(data = fed_transfer, 
+                aes(x = province, fed_transfer[,year_input])) +
+                geom_col() +
+                xlab("Province") +
+                ylab("Thousand CAD per person") +
+                theme(axis.text=element_text(size=12),
+axis.title.x=element_text(size=16), axis.title.y=element_text(size=16))
+})
+```
+
+## Panel 2: Calculation Example
+```{r calculate output, echo = FALSE, warning = FALSE}
+inputPanel(
+    sliderInput("year_calc", "Year:", min = 1980,
+                    max = 2017, value = c(1980,2017), sep = ""),
+    radioButtons("prov", "Province/Territory:", choices=c("Alberta",
+                "British Columbia", "Manitoba", "New Brunswick", "Newfoundland", 
+                "Nova Scotia", "Northwest Territories", "Nunuvat", "Ontario", 
+                "Prince Edward Island", "Quebec", "Saskatchewan", "Yukon"))
+)
+provinces <- c("Alberta","British Columbia", "Manitoba", "New Brunswick", 
+                    "Newfoundland", "Nova Scotia", "Northwest Territories", 
+                    "Nunuvat", "Ontario", "Prince Edward Island", "Quebec", 
+                    "Saskatchewan", "Yukon")
+renderText({paste0("The absolute change in Canadian dollar Federal transfer payments
+                allocated in ", input$prov, " per person from ", 
+                input$year_calc[1], " to ", input$year_calc[2], " $", 
+                round((fed_transfer[which(provinces == input$prov),paste0("year_", input$year_calc[2])] - 
+                                fed_transfer[which(provinces == input$prov),paste0("year_", input$year_calc[1])])*1000), ".")
+})
+```

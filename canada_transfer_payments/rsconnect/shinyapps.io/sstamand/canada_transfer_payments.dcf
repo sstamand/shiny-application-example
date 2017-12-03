@@ -1,0 +1,10 @@
+name: canada_transfer_payments
+title:
+username:
+account: sstamand
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 243391
+bundleId: 1112189
+url: https://sstamand.shinyapps.io/canada_transfer_payments/
+when: 1512324217.40267
