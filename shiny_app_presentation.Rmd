@@ -7,9 +7,8 @@ output: ioslides_presentation
 ---
 
 ```{r setup, include=FALSE}
-setwd("C:/Users/saman/Documents/Coursera/Assignments/Course 9/shiny app/canada_transfer_payments")
 knitr::opts_chunk$set(echo = TRUE, include = TRUE, fig.path='Figs/')
-fed_transfer <- read.csv("fed_transfer_data.csv")
+fed_transfer <- read.csv("fed_transfer.csv")
 library(shiny)
 library(ggplot2)
 ```
